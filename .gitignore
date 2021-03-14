@@ -1,0 +1,11 @@
+#idea
+.idea/
+*.iml
+
+#api
+*.env
+
+#database
+*.tmp
+*.csv
+*.json
