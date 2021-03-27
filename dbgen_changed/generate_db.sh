@@ -1,10 +1,17 @@
 #!/bin/bash
 echo "start generating data..."
-
 cd /tpch-dbgen
-mysql -uroot -p1234 < dss.ddl
-mysql -uroot -p1234 < dss.ri
+
+echo "run dss.dll..."
+mysql -uroot -p1234 --local-infile < dss.ddl
+
+echo "run dss.ri..."
+mysql -uroot -p1234 --local-infile < dss.ri
+
+echo "run load.sh..."
 ./load.sh
-mysql -uroot -p1234 < loaddata.sql
+
+echo "loading data..."
+mysql -uroot -p1234 --local-infile < loaddata.sql
 
 echo "script ended successfully."

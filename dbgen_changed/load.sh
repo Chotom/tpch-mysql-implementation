@@ -5,7 +5,7 @@ write_to_file()
     if [ ! -f "$file" ] ; then
         touch "$file"
     fi
-    echo 'USE tpch;' >> $file
+    echo 'USE TPCD;' >> $file
     echo 'SET FOREIGN_KEY_CHECKS=0;' >> $file
     DIR=`pwd`
     for tbl in `ls *.tbl`; do
