@@ -10,7 +10,7 @@ write_to_file()
     DIR=`pwd`
     for tbl in `ls *.tbl`; do
         table=$(echo "${tbl%.*}")
-        echo "LOAD DATA LOCAL INFILE '$DIR/$tbl' INTO TABLE $table" >> $file
+        echo "LOAD DATA LOCAL INFILE '$DIR/$tbl' INTO TABLE ${table^^}" >> $file
         echo "FIELDS TERMINATED BY '|' LINES TERMINATED BY '|\n';" >> $file
     done
     echo 'SET FOREIGN_KEY_CHECKS=1;' >> $file
