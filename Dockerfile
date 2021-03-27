@@ -15,7 +15,7 @@ RUN cd tpch-dbgen; make \
     && chmod -R +755 /tpch-dbgen
 
 #ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["mysqld"]
+#CMD ["mysqld"]
 
 #CMD ["/tpch-dbgen/generate_db.sh"]
 
