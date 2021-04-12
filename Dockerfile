@@ -3,16 +3,23 @@ FROM mysql:latest
 #RUN printf "\n" | pecl install imagick
 #RUN docker-php-ext-enable imagick
 
+RUN echo "INSTALLING git, make, gcc"
+
 RUN true \
     && apt-get -y update \
     && apt-get -y install git make gcc \
-    && git clone https://github.com/electrum/tpch-dbgen
 
-COPY ./dbgen_changed/ /tpch-dbgen/
-
-RUN cd tpch-dbgen; make \
-    && ./dbgen -s 1 -f \
-    && chmod -R +755 /tpch-dbgen
+#RUN echo "CLONING tpch-dbgen"
+#
+#RUN git clone https://github.com/electrum/tpch-dbgen
+#
+#RUN echo "COPYING scripts"
+#
+#COPY ./dbgen_changed/ /tpch-dbgen/
+#
+#RUN echo "COMPILING tpch-dbgen"
+#
+#RUN cd tpch-dbgen; make
 
 #ENTRYPOINT ["docker-entrypoint.sh"]
 #CMD ["mysqld"]

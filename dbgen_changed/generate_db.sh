@@ -1,7 +1,13 @@
 #!/bin/bash
-echo "start generating data..."
 
 cd /tpch-dbgen
+
+echo "start generating data..."
+./dbgen -s 0.1 -f
+#chmod -R +755 /tpch-dbgen
+
+mkdir db_data -v
+mv ./*.tbl ./db_data
 
 echo "run dss.dll..."
 mysql -uroot -p1234 < dss.ddl
@@ -15,6 +21,6 @@ mysql -p1234 -D TPCD -e "SET GLOBAL local_infile=true"
 ./load.sh
 
 echo "loading data..."
-mysql -uroot -p1234 --local-infile < loaddata.sql
+mysql -uroot -p1234 --local-infile < db_data/loaddata.sql
 
 echo "script ended successfully."

@@ -1,6 +1,5 @@
 #!/bin/bash
-write_to_file()
-{
+write_to_file() {
     file="loaddata.sql"
     if [ ! -f "$file" ] ; then
         touch "$file"
@@ -8,11 +7,12 @@ write_to_file()
     echo 'USE TPCD;' >> $file
     echo 'SET FOREIGN_KEY_CHECKS=0;' >> $file
     DIR=`pwd`
-    for tbl in `ls *.tbl`; do
+    for tbl in `ls *.tbl` ; do
         table=$(echo "${tbl%.*}")
         echo "LOAD DATA LOCAL INFILE '$DIR/$tbl' INTO TABLE ${table^^}" >> $file
         echo "FIELDS TERMINATED BY '|' LINES TERMINATED BY '|\n';" >> $file
     done
     echo 'SET FOREIGN_KEY_CHECKS=1;' >> $file
 }
+cd db_data
 write_to_file

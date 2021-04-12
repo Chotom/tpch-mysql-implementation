@@ -22,3 +22,5 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 1234
       # https://hub.docker.com/_/mysql
+    volumes:
+      - "./tpch-dbgen:/tpch-dbgen"
