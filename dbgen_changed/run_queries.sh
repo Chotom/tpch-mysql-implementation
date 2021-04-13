@@ -1,5 +1,5 @@
 #!/bin/bash
 
 for i in {1..22}; do
-    mysql -u root -p password < dbgen/queries/query-$i.sql
+    mysql -uroot -p1234 -DTPCD < db_queries/$i.sql
 done
