@@ -1,101 +1,101 @@
 -- Sccsid:     @(#)dss.ri	2.1.8.1
 -- TPCD Benchmark Version 8.0
 
-USE TPCD;
+USE tpcd;
 
--- ALTER TABLE TPCD.REGION DROP PRIMARY KEY;
--- ALTER TABLE TPCD.NATION DROP PRIMARY KEY;
--- ALTER TABLE TPCD.PART DROP PRIMARY KEY;
--- ALTER TABLE TPCD.SUPPLIER DROP PRIMARY KEY;
--- ALTER TABLE TPCD.PARTSUPP DROP PRIMARY KEY;
--- ALTER TABLE TPCD.ORDERS DROP PRIMARY KEY;
--- ALTER TABLE TPCD.LINEITEM DROP PRIMARY KEY;
--- ALTER TABLE TPCD.CUSTOMER DROP PRIMARY KEY;
+-- ALTER TABLE tpcd.region DROP PRIMARY KEY;
+-- ALTER TABLE tpcd.nation DROP PRIMARY KEY;
+-- ALTER TABLE tpcd.part DROP PRIMARY KEY;
+-- ALTER TABLE tpcd.supplier DROP PRIMARY KEY;
+-- ALTER TABLE tpcd.partsupp DROP PRIMARY KEY;
+-- ALTER TABLE tpcd.orders DROP PRIMARY KEY;
+-- ALTER TABLE tpcd.lineitem DROP PRIMARY KEY;
+-- ALTER TABLE tpcd.customer DROP PRIMARY KEY;
 
 
 -- For table REGION
-ALTER TABLE TPCD.REGION
-ADD PRIMARY KEY (R_REGIONKEY);
+ALTER TABLE tpcd.region
+ADD PRIMARY KEY (r_regionkey);
 
 -- For table NATION
-ALTER TABLE TPCD.NATION
-ADD PRIMARY KEY (N_NATIONKEY);
+ALTER TABLE tpcd.nation
+ADD PRIMARY KEY (n_nationkey);
 
-ALTER TABLE TPCD.NATION
-ADD FOREIGN KEY NATION_FK1 (N_REGIONKEY) references TPCD.REGION(R_REGIONKEY);
-
-COMMIT WORK;
-
--- For table PART
-ALTER TABLE TPCD.PART
-ADD PRIMARY KEY (P_PARTKEY);
+ALTER TABLE tpcd.nation
+ADD FOREIGN KEY nation_fk1 (n_regionkey) references tpcd.region(r_regionkey);
 
 COMMIT WORK;
 
--- For table SUPPLIER
-ALTER TABLE TPCD.SUPPLIER
-ADD PRIMARY KEY (S_SUPPKEY);
+-- For table part
+ALTER TABLE tpcd.part
+ADD PRIMARY KEY (p_partkey);
 
-ALTER TABLE TPCD.SUPPLIER
-ADD FOREIGN KEY SUPPLIER_FK1 (S_NATIONKEY) references TPCD.NATION(N_NATIONKEY);
+COMMIT WORK;
+
+-- For table supplier
+ALTER TABLE tpcd.supplier
+ADD PRIMARY KEY (s_suppkey);
+
+ALTER TABLE tpcd.supplier
+ADD FOREIGN KEY supplier_fk1 (s_nationkey) references tpcd.nation(n_nationkey);
+
+COMMIT WORK;
+
+-- For table partsupp
+ALTER TABLE tpcd.partsupp
+ADD PRIMARY KEY (ps_partkey,ps_suppkey);
+
+COMMIT WORK;
+
+-- For table customer
+ALTER TABLE tpcd.customer
+ADD PRIMARY KEY (c_custkey);
+
+ALTER TABLE tpcd.customer
+ADD FOREIGN KEY customer_fk1 (c_nationkey) references tpcd.nation(n_nationkey);
+
+COMMIT WORK;
+
+-- For table lineitem
+ALTER TABLE tpcd.lineitem
+ADD PRIMARY KEY (l_orderkey,l_linenumber);
+
+COMMIT WORK;
+
+-- For table orders
+ALTER TABLE tpcd.orders
+ADD PRIMARY KEY (o_orderkey);
 
 COMMIT WORK;
 
 -- For table PARTSUPP
-ALTER TABLE TPCD.PARTSUPP
-ADD PRIMARY KEY (PS_PARTKEY,PS_SUPPKEY);
+ALTER TABLE tpcd.partsupp
+ADD FOREIGN KEY partsupp_fk1 (ps_suppkey) references tpcd.supplier(s_suppkey);
 
 COMMIT WORK;
 
--- For table CUSTOMER
-ALTER TABLE TPCD.CUSTOMER
-ADD PRIMARY KEY (C_CUSTKEY);
-
-ALTER TABLE TPCD.CUSTOMER
-ADD FOREIGN KEY CUSTOMER_FK1 (C_NATIONKEY) references TPCD.NATION(N_NATIONKEY);
+ALTER TABLE tpcd.partsupp
+ADD FOREIGN KEY partsupp_fk2 (ps_partkey) references tpcd.part(p_partkey);
 
 COMMIT WORK;
 
--- For table LINEITEM
-ALTER TABLE TPCD.LINEITEM
-ADD PRIMARY KEY (L_ORDERKEY,L_LINENUMBER);
+-- For table orders
+ALTER TABLE tpcd.orders
+ADD FOREIGN KEY orders_fk1 (o_custkey) references tpcd.customer(c_custkey);
 
 COMMIT WORK;
 
--- For table ORDERS
-ALTER TABLE TPCD.ORDERS
-ADD PRIMARY KEY (O_ORDERKEY);
+-- For table lineitem
+ALTER TABLE tpcd.lineitem
+ADD FOREIGN KEY LINEITEM_FK1 (L_ORDERKEY) references tpcd.orders(o_orderkey);
 
 COMMIT WORK;
 
--- For table PARTSUPP
-ALTER TABLE TPCD.PARTSUPP
-ADD FOREIGN KEY PARTSUPP_FK1 (PS_SUPPKEY) references TPCD.SUPPLIER(S_SUPPKEY);
-
-COMMIT WORK;
-
-ALTER TABLE TPCD.PARTSUPP
-ADD FOREIGN KEY PARTSUPP_FK2 (PS_PARTKEY) references TPCD.PART(P_PARTKEY);
-
-COMMIT WORK;
-
--- For table ORDERS
-ALTER TABLE TPCD.ORDERS
-ADD FOREIGN KEY ORDERS_FK1 (O_CUSTKEY) references TPCD.CUSTOMER(C_CUSTKEY);
-
-COMMIT WORK;
-
--- For table LINEITEM
-ALTER TABLE TPCD.LINEITEM
-ADD FOREIGN KEY LINEITEM_FK1 (L_ORDERKEY) references TPCD.ORDERS(O_ORDERKEY);;
-
-COMMIT WORK;
-
-ALTER TABLE TPCD.LINEITEM
-ADD FOREIGN KEY LINEITEM_FK2 (L_PARTKEY,L_SUPPKEY) references
-        TPCD.PARTSUPP(PS_PARTKEY,PS_SUPPKEY);
+ALTER TABLE tpcd.lineitem
+ADD FOREIGN KEY lineitem_fk2 (l_partkey,l_suppkey) references
+        tpcd.partsupp(ps_partkey,ps_suppkey);
 
 COMMIT WORK;
 
 
-USE TPCD;
+USE tpcd;

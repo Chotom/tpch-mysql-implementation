@@ -20,10 +20,9 @@ mysql -uroot -p1234 < dss.ri
 
 echo "run load.sh..."
 #set global local_infile=true;
-mysql -p1234 -D TPCD -e "SET GLOBAL local_infile=true"
-./load.shd
+mysql -p1234 -D tpcd -e "SET GLOBAL local_infile=true"
 
 echo "loading data..."
-mysql -uroot -p1234 --local-infile < db_data/loaddata.sql
+mysql -uroot -p1234 --local-infile < loaddata.sql
 
 echo "script ended successfully."
