@@ -2,7 +2,7 @@
 
 cd /tpch-dbgen
 
-echo "copmiling dbgen, qgen"
+echo "compiling dbgen, qgen"
 make
 
 echo "start generating data..."

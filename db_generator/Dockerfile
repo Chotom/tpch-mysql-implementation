@@ -7,7 +7,7 @@ RUN echo "INSTALLING git, make, gcc"
 
 RUN true \
     && apt-get -y update \
-    && apt-get -y install git make gcc \
+    && apt-get -y install git make gcc
 
 #RUN echo "CLONING tpch-dbgen"
 #
@@ -15,7 +15,7 @@ RUN true \
 #
 #RUN echo "COPYING scripts"
 #
-#COPY ./dbgen_changed/ /tpch-dbgen/
+#COPY ./db_generator/ /tpch-dbgen/
 #
 #RUN echo "COMPILING tpch-dbgen"
 #
