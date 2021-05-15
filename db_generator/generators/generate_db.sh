@@ -2,27 +2,24 @@
 
 cd /tpch-dbgen
 
-echo "compiling dbgen, qgen"
+echo "Compiling dbgen, qgen"
 make
 
-echo "start generating data..."
-./dbgen -s 0.1 -f
+echo "Start generating data..."
 #chmod -R +755 /tpch-dbgen
-
+./dbgen -s 0.1 -f
 mkdir db_data -v
 mv ./*.tbl ./db_data
 
-echo "run dss.dll..."
+echo "Create tables..."
 mysql -uroot -p1234 < dss.ddl
 
-echo "run dss.ri..."
+echo "Create indexes and relations..."
 mysql -uroot -p1234 < dss.ri
 
-echo "run load.sh..."
+echo "Loading data..."
 #set global local_infile=true;
 mysql -p1234 -D tpcd -e "SET GLOBAL local_infile=true"
-
-echo "loading data..."
 mysql -uroot -p1234 --local-infile < loaddata.sql
 
 echo "script ended successfully."
