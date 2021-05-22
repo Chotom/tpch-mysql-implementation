@@ -1,5 +1,5 @@
 -- Sccsid:     @(#)dss.ddl	2.1.8.1
--- Beginning of the addition
+-- Create database tables for mysql
 -- DROP DATABASE tpcd;
 CREATE DATABASE IF NOT EXISTS tpcd;
 USE tpcd;
