@@ -18,6 +18,7 @@ services:
   benchmark:
     build: .
     container_name: benchmark_tpch
+    tty: true
     environment:
-      MYSQL_HOST: 196.168.0.115
+      MYSQL_HOST: mysql_server
       PORT: 3306

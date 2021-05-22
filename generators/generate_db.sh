@@ -7,8 +7,8 @@ make
 
 echo "Start generating data..."
 ./dbgen -s 0.1 -f
-mkdir db_data -v
-mv ./*.tbl ./db_data
+mkdir /db_data -v
+mv ./*.tbl /db_data
 
 echo "Create tables in $MYSQL_HOST..."
 mysql -h $MYSQL_HOST -P $PORT -uroot -p1234 < dss.ddl
