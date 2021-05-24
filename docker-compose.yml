@@ -22,3 +22,4 @@ services:
     environment:
       MYSQL_HOST: mysql_server
       PORT: 3306
+      DB: tpcd
