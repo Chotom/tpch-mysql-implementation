@@ -5,11 +5,10 @@ import logging
 import mysql.connector
 from mysql.connector.cursor import MySQLCursorBuffered
 
-
 # Consts
 
 
-LOG_LEVEL = 'DEBUG'
+LOG_LEVEL = logging.INFO
 DB_CONFIG = {
     'user': 'root',
     'password': '1234',
@@ -82,7 +81,7 @@ def create_logger(name: str) -> logging.Logger:
     formatter = logging.Formatter(log_format)
 
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
+    console_handler.setLevel(LOG_LEVEL)
     console_handler.setFormatter(formatter)
 
     logger = logging.getLogger(name)
@@ -92,35 +91,37 @@ def create_logger(name: str) -> logging.Logger:
     return logger
 
 
-def run_query_stream(cur: MySQLCursorBuffered, stream) -> bool:
+def run_query_stream(cursor: MySQLCursorBuffered, stream) -> bool:
+    # init
     log = create_logger('query_stream')
-    query_order = QUERY_ORDER[stream % len(QUERY_ORDER)]
     run_query_stream_time = dt.timedelta(0)
-    log.info(f'Run query stream {stream} in order {query_order}')
+    query_order = QUERY_ORDER[stream % len(QUERY_ORDER)]
+    log.info(f'Run 22 queries stream {stream} in order {query_order}')
 
     for i in range(0, 22):
-        log.info(f'Run query {query_order[i]} in stream {stream}:')
+        log.info(f'Run query {query_order[i]} in stream {stream}')
         try:
             querypath = f'{QUERIES_DIR}/{query_order[i]}.sql'
             with open(querypath) as query_file:
                 query = query_file.read()
+                cursors_generator = cursor.execute(query, multi=True)
 
                 # Measure time for executed query
                 start = dt.datetime.now()
-                results = cur.execute(query, multi=True)
-
-                for cur in results:
-                    log.info(f'Cursor:\n {cur}')
-                    if cur.with_rows:
-                        log.info(f'Result:\n {cur.fetchall()}')
-
+                # for _ in cursors_generator: pass    # iterate over generated cursors to execute them and get the results
+                cursors = [cur for cur in cursors_generator]
                 measured_time = dt.datetime.now() - start
                 run_query_stream_time += measured_time
 
-                log.info(f'Time: {measured_time}')
+                # Print additional information about query
+                log.debug(f'Time: {measured_time}')
+                for cur in cursors:
+                    log.debug(f'Cursor:\n {cur}')
+                    if cur.with_rows:
+                        log.debug(f'Result:\n {cur.fetchall()}')
         except mysql.connector.Error as e:
             log.error(f'Error executing query {query} in stream {stream}: {e}')
             return True
 
-    log.info(f'Time query stream {stream}: {run_query_stream_time}')
+    log.info(f'Time for query stream {stream}: {run_query_stream_time}')
     return False
