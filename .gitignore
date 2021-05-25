@@ -1,5 +1,8 @@
-/tpch_tools
-tpch-dbgen
+# exclude all from tpch
+tpch_tools/*
+# but keep the folder itself
+!tpch_tools/.gitkeep
+
 backup
 
 

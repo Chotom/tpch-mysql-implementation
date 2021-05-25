@@ -23,3 +23,6 @@ services:
       MYSQL_HOST: mysql_server
       PORT: 3306
       DB: tpcd
+    volumes:
+      - ./generators:/generators
+      - ./benchmark_cli:/benchmark_cli

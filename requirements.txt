@@ -1,0 +1,4 @@
+fire==0.4.0
+mysql-connector-python==8.0.25
+six==1.16.0
+termcolor==1.1.0

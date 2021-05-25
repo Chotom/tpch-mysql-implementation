@@ -14,3 +14,5 @@ COPY tpch_tools /tpch_tools
 COPY dbgen_mysql_patch /tpch_tools/dbgen
 RUN pip install -r requirements.txt
 ENV PYTHONPATH="${PYTHONPATH}:/"
+
+RUN make -C tpch_tools/dbgen/
