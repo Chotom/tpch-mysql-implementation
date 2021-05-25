@@ -108,12 +108,15 @@ def run_query_stream(cur: MySQLCursorBuffered, stream) -> bool:
                 # Measure time for executed query
                 start = dt.datetime.now()
                 results = cur.execute(query, multi=True)
+
+                for cur in results:
+                    log.info(f'Cursor:\n {cur}')
+                    if cur.with_rows:
+                        log.info(f'Result:\n {cur.fetchall()}')
+
                 measured_time = dt.datetime.now() - start
                 run_query_stream_time += measured_time
 
-                for result in results:
-                    result.fetchall()
-                log.debug(f'Result:\n {result}')
                 log.info(f'Time: {measured_time}')
         except mysql.connector.Error as e:
             log.error(f'Error executing query {query} in stream {stream}: {e}')
