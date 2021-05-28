@@ -1,4 +1,5 @@
 #!/bin/bash
+SCALE_FACTOR=0.1
 
 cd /tpch_tools/dbgen
 
@@ -6,7 +7,7 @@ echo "Compiling dbgen, qgen"
 make
 
 echo "Start generating data..."
-./dbgen -s 0.1 -f
+./dbgen -vf -s $SCALE_FACTOR
 mkdir /db_data -v
 mv ./*.tbl /db_data
 

@@ -6,9 +6,9 @@ import mysql.connector
 from mysql.connector.cursor import MySQLCursorBuffered
 
 # Consts
+from typing import List
 
-
-LOG_LEVEL = logging.INFO
+LOG_LEVEL = logging.DEBUG
 DB_CONFIG = {
     'user': 'root',
     'password': '1234',
@@ -125,3 +125,63 @@ def run_query_stream(cursor: MySQLCursorBuffered, stream) -> bool:
 
     log.info(f'Time for query stream {stream}: {run_query_stream_time}')
     return False
+
+
+def generate_insert_into_orders_query(row: str) -> str:
+    # values order:
+    # o_orderkey      INTEGER        NOT NULL,
+    # o_custkey       INTEGER        NOT NULL,
+    # o_orderstatus   CHAR(1)        NOT NULL,
+    # o_totalprice    DECIMAL(15, 2) NOT NULL,
+    # o_orderdate     DATE           NOT NULL,
+    # o_orderpriority CHAR(15)       NOT NULL,
+    # o_clerk         CHAR(15)       NOT NULL,
+    # o_shippriority  INTEGER        NOT NULL,
+    # o_comment       VARCHAR(79)    NOT NULL
+
+    # remove last '|' or '\n' character
+    row = row.rstrip('\n|')
+    # split row into values
+    values = row.split('|')
+
+    quoted_values_indexes = [2, 4, 5, 6, 8]
+    for i in range(len(values)):
+        if i in quoted_values_indexes:
+            # surround with quotes
+            values[i] = f"'{values[i]}'"
+
+    separator = ', '
+    return f'INSERT INTO `orders` VALUES ({separator.join(values)});'
+
+def generate_insert_into_lineitem_query(row: str) -> str:
+    # values order:
+    # l_orderkey      INTEGER        NOT NULL,
+    # l_partkey       INTEGER        NOT NULL,
+    # l_suppkey       INTEGER        NOT NULL,
+    # l_linenumber    INTEGER        NOT NULL,
+    # l_quantity      DECIMAL(15, 2) NOT NULL,
+    # l_extendedprice DECIMAL(15, 2) NOT NULL,
+    # l_discount      DECIMAL(15, 2) NOT NULL,
+    # l_tax           DECIMAL(15, 2) NOT NULL,
+    # l_returnflag    CHAR(1)        NOT NULL,
+    # l_linestatus    CHAR(1)        NOT NULL,
+    # l_shipdate      DATE           NOT NULL,
+    # l_commitdate    DATE           NOT NULL,
+    # l_receiptdate   DATE           NOT NULL,
+    # l_shipinstruct  CHAR(25)       NOT NULL,
+    # l_shipmode      CHAR(10)       NOT NULL,
+    # l_comment       VARCHAR(44)    NOT NULL
+
+    # remove last '|' character
+    row = row.strip('|')
+    # split row into values
+    values = row.split('|')
+
+    quoted_values_indexes = [8, 9, 10, 11, 12, 13, 14, 15]
+    for i in range(len(values)):
+        if i in quoted_values_indexes:
+            # surround with quotes
+            values[i] = f"'{values[i]}'"
+
+    separator = ', '
+    return f'INSERT INTO `lineitem` VALUES ({separator.join(values)});'
