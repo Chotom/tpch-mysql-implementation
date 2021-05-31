@@ -1,2 +1,0 @@
-from benchmark_cli.workload_cmd.powertest import power_test
-from benchmark_cli.workload_cmd.powertest import refresh_function_1
