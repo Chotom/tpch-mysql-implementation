@@ -1,5 +1,5 @@
 import fire
-from workload_cmd import *
+from performance import *
 
 
 if __name__ == '__main__':

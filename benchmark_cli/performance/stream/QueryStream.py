@@ -1,5 +1,5 @@
 import datetime
-from typing import Optional, Generator, Any
+from typing import Optional, Generator, Any, List
 
 from mysql.connector.cursor import MySQLCursorBuffered, MySQLCursor
 
@@ -13,7 +13,7 @@ class QueryStream(AbstractStream):
     def __init__(self, logger_name: str, data_path: str, is_buffered: bool, stream_number: int):
         super().__init__(logger_name, data_path, is_buffered)
         self.__stream_number = stream_number
-        self.__query_order: list[int] = QUERY_ORDER[stream_number]
+        self.__query_order: List[int] = QUERY_ORDER[stream_number]
 
     def load_data(self):
         self.__log.info('Load queries...')

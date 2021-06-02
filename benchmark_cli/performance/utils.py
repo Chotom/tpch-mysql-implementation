@@ -1,11 +1,12 @@
 """Utility functions for performance module
 """
 import logging
+from typing import List
 
 from benchmark_cli.performance.constants import LOG_LEVEL, MYSQL_VALUE_SEP
 
 
-def data_row_to_query(row: str, table_name: str, quoted_values_indexes: list[int]) -> str:
+def data_row_to_query(row: str, table_name: str, quoted_values_indexes: List[int]) -> str:
     """
     convert string data into mysql insert query
 

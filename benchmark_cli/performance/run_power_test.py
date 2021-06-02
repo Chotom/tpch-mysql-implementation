@@ -8,7 +8,7 @@ from benchmark_cli.performance.stream.QueryStream import QueryStream
 from benchmark_cli.performance.utils import create_logger
 
 
-def power_test():
+def run_power_test():
     log = create_logger('power_test')
     log.info('Start power test...')
 
