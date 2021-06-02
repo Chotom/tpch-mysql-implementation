@@ -16,13 +16,12 @@ def run_power_test():
     # Generate queries
     subprocess.run([f'{ROOT_DIR}/generators/generate_refresh_data.sh'])
 
-    # query_stream = QueryStream('query_stream_0', QUERIES_DIR, True, 0)
+    # query_stream = QueryStream('query_stream_0', 0)
     # query_stream.load_data()
     # # Run queries
     # query_stream.execute_stream()
 
-    refresh_stream = RefreshStream('refresh_stream_0', "/db_refresh_data", False, 1, 0.1)
-
+    refresh_stream = RefreshStream('refresh_stream_0', 1)
     refresh_stream.load_data()
     refresh_stream.execute_stream()
 

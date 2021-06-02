@@ -22,6 +22,9 @@ ROOT_DIR = f''
 QUERIES_DIR = f'{ROOT_DIR}/db_queries'
 """Directory for generated queries"""
 
+REFRESH_DATA_DIR = f'{ROOT_DIR}/db_refresh_data'
+"""Directory for generated refresh data"""
+
 MYSQL_VALUE_SEP = ','
 """Data values separator in mysql dialect"""
 
