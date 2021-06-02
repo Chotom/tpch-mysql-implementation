@@ -4,7 +4,7 @@
 import logging
 import os
 
-LOG_LEVEL = logging.INFO
+LOG_LEVEL = logging.DEBUG
 """Message logging level"""
 
 DB_CONFIG = {
@@ -25,7 +25,7 @@ QUERIES_DIR = f'{ROOT_DIR}/db_queries'
 MYSQL_VALUE_SEP = ','
 """Data values separator in mysql dialect"""
 
-ORDER_QUOTE_INDEX_LIST = [2, 4, 5, 6, 8]
+ORDERS_QUOTE_INDEX_LIST = [2, 4, 5, 6, 8]
 """Order table values order:\n
 [0] o_orderkey      INTEGER        NOT NULL,\n
 [1] o_custkey       INTEGER        NOT NULL,\n

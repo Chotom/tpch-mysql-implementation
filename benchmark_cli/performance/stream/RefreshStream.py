@@ -2,7 +2,7 @@ import datetime
 import random
 from typing import Iterator
 
-from benchmark_cli.performance.constants import ORDER_QUOTE_INDEX_LIST, LINEITEM_QUOTE_INDEX_LIST
+from benchmark_cli.performance.constants import ORDERS_QUOTE_INDEX_LIST, LINEITEM_QUOTE_INDEX_LIST
 from benchmark_cli.performance.stream.AbstractStream import AbstractStream
 from benchmark_cli.performance.utils import data_row_to_query
 
@@ -21,18 +21,38 @@ class RefreshStream(AbstractStream):
     def load_data(self):
         self._log.info('Load queries...')
 
-        # Load queries from files to memory
-        with open(f'{self._data_path}/orders.tbl.u{self.__run_number}', 'r') as orders_file:
-            orders_queries = orders_file.readlines()
-            for i, values_row in enumerate(orders_queries):
-                orders_queries[i] = data_row_to_query(values_row, 'order', ORDER_QUOTE_INDEX_LIST)
-            self.__orders_queries_iter = iter(orders_queries)
+        queries = []
 
-        with open(f'{self._data_path}/lineitem.tbl.u{self.__run_number}', 'r') as lineitem_file:
-            lineitem_queries = lineitem_file.readlines()
-            for i, values_row in enumerate(lineitem_queries):
-                lineitem_queries[i] = data_row_to_query(values_row, 'lineitem', LINEITEM_QUOTE_INDEX_LIST)
-            self.__lineitem_queries_iter = iter(lineitem_queries)
+        with open(f'{self._data_path}/orders.tbl.u{self.__run_number}', 'r') as orders_file,\
+                open(f'{self._data_path}/lineitem.tbl.u{self.__run_number}', 'r') as lineitem_file:
+            try:
+                # read first lineitem query
+                lineitem_row = next(lineitem_file)
+                lineitem_id, lineitem_query = data_row_to_query(lineitem_row, 'lineitem', LINEITEM_QUOTE_INDEX_LIST)
+            except StopIteration:
+                raise Exception("Lineitem update file is empty.")
+
+            for orders_row in orders_file:
+                # read orders query
+                orders_id, orders_query = data_row_to_query(orders_row, 'orders', ORDERS_QUOTE_INDEX_LIST)
+                queries.append(orders_query)
+
+                # if current orders query has lineitem children
+                while orders_id == lineitem_id:
+                    # add lineitem
+                    queries[-1] += lineitem_query
+
+                    try:
+                        # read next lineitem query
+                        lineitem_row = next(lineitem_file)
+                        lineitem_id, lineitem_query = data_row_to_query(lineitem_row, 'lineitem',
+                                                                        LINEITEM_QUOTE_INDEX_LIST)
+                    except StopIteration:
+                        break
+
+        # save queries
+        self.__queries_iter = iter(queries)
+
         self._log.info('Queries loaded successfully...')
 
     def execute_stream(self):
@@ -47,24 +67,24 @@ class RefreshStream(AbstractStream):
         self._log.info('Run refresh function 1...')
 
         # Execute insert queries
-        for i in range(int(self.__scale * 1500)):
-            order_query = next(self.__orders_queries_iter)
+        for query in self.__queries_iter:
+            self._log.debug(f'Query: {query}')
+            # Insert new row into `orders` and its `lineitem` table
+            cursors_generator = self._cursor.execute(query, multi=True)
 
             # Measure time for transaction
             start = datetime.datetime.now()
 
-            # Insert new row into `orders` table
-            self._cursor.execute(f'{order_query}')
-            for j in range(random.randint(1, 7)):
-                # Insert new row into `lineitem` table
-                self._cursor.execute(f'{next(self.__lineitem_queries_iter)}')
+            # for _ in cursors_generator: pass    # iterate over generated cursors to execute them and get the results
+            cursors = [cur for cur in cursors_generator]
+
             self._connection.commit()
 
             time_delta = datetime.datetime.now() - start
             self.__rf1_time += time_delta
 
             # Print additional information
-            self._log.debug(f'Time for {order_query} query: {time_delta}')
+            self._log.debug(f'Time for {query} query: {time_delta}')
         self._df_measures.append({'name': f'RF1', 'time': self.__rf1_time}, ignore_index=True)
         self._log.info(f'Execution of refresh function 1 ended successful. Measured time: {self.__rf1_time}')
 
