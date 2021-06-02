@@ -12,20 +12,21 @@ from benchmark_cli.performance.utils import create_logger
 class AbstractStream(ABC):
     def __init__(self, logger_name: str, data_path: str, is_buffered: bool):
         # Init
-        self.__log = create_logger(logger_name)
-        self.__data_path = data_path
-        self.__measured_total_time = datetime.timedelta(0)
-        self.__df_measures = pd.DataFrame({'name': str, 'time': np.timedelta64}).set_index('name')
+        self._log = create_logger(logger_name)
+        self._data_path = data_path
 
         # Set session
         try:
-            self.__log.info('Trying to connect to database...')
-            self.__connection = MySQLConnection(**DB_CONFIG)
-            self.__cursor = self.__connection.cursor(buffered=is_buffered)
+            self._log.info('Trying to connect to database...')
+            self._connection = MySQLConnection(**DB_CONFIG)
+            self._cursor = self._connection.cursor(buffered=is_buffered)
         except mysql.connector.Error as e:
-            self.__log.error(f'Cannot connect to database: {e}')
+            self._log.error(f'Cannot connect to database: {e}')
             raise
-        self.__log.info('Database connected successful.')
+        self._log.info('Database connected successful.')
+
+        self._measured_total_time = datetime.timedelta(0)
+        self._df_measures = pd.DataFrame(columns=['name', 'time'], dtype=np.dtype(str, np.timedelta64)).set_index('name')
 
     @abstractmethod
     def load_data(self):
@@ -46,9 +47,9 @@ class AbstractStream(ABC):
         """
         :return: dataframe with measured queries and total_time of execution
         """
-        self.__df_measures.append({'name': f'total_time', 'time': self.__measured_total_time})
-        return self.__df_measures
+        self._df_measures.append({'name': f'total_time', 'time': self._measured_total_time})
+        return self._df_measures
 
     def __del__(self):
-        self.__connection.close()
-        self.__cursor.close()
+        self._cursor.close()
+        self._connection.close()

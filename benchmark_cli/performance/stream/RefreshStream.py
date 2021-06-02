@@ -19,32 +19,32 @@ class RefreshStream(AbstractStream):
         self.__rf2_time = datetime.timedelta(0)
 
     def load_data(self):
-        self.__log.info('Load queries...')
+        self._log.info('Load queries...')
 
         # Load queries from files to memory
-        with open(f'{self.__data_path}/orders.tbl.u{self.__run_number}', 'r') as orders_file:
+        with open(f'{self._data_path}/orders.tbl.u{self.__run_number}', 'r') as orders_file:
             orders_queries = orders_file.readlines()
             for i, values_row in enumerate(orders_queries):
                 orders_queries[i] = data_row_to_query(values_row, 'order', ORDER_QUOTE_INDEX_LIST)
             self.__orders_queries_iter = iter(orders_queries)
 
-        with open(f'{self.__data_path}/lineitem.tbl.u{self.__run_number}', 'r') as lineitem_file:
+        with open(f'{self._data_path}/lineitem.tbl.u{self.__run_number}', 'r') as lineitem_file:
             lineitem_queries = lineitem_file.readlines()
             for i, values_row in enumerate(lineitem_queries):
                 lineitem_queries[i] = data_row_to_query(values_row, 'lineitem', LINEITEM_QUOTE_INDEX_LIST)
             self.__lineitem_queries_iter = iter(lineitem_queries)
-        self.__log.info('Queries loaded successfully...')
+        self._log.info('Queries loaded successfully...')
 
     def execute_stream(self):
-        self.__log.info('Run refresh stream...')
+        self._log.info('Run refresh stream...')
 
         self.execute_refresh_function1()
         self.execute_refresh_function2()
 
-        self.__log.info(f'Execution of refresh stream ended successful. Measured time: {self.__measured_total_time}')
+        self._log.info(f'Execution of refresh stream ended successful. Measured time: {self._measured_total_time}')
 
     def execute_refresh_function1(self):
-        self.__log.info('Run refresh function 1...')
+        self._log.info('Run refresh function 1...')
 
         # Execute insert queries
         for i in range(int(self.__scale * 1500)):
@@ -54,19 +54,19 @@ class RefreshStream(AbstractStream):
             start = datetime.datetime.now()
 
             # Insert new row into `orders` table
-            self.__cursor.execute(f'{order_query}')
+            self._cursor.execute(f'{order_query}')
             for j in range(random.randint(1, 7)):
                 # Insert new row into `lineitem` table
-                self.__cursor.execute(f'{next(self.__lineitem_queries_iter)}')
-            self.__connection.commit()
+                self._cursor.execute(f'{next(self.__lineitem_queries_iter)}')
+            self._connection.commit()
 
             time_delta = datetime.datetime.now() - start
             self.__rf1_time += time_delta
 
             # Print additional information
-            self.__log.debug(f'Time for {order_query} query: {time_delta}')
-        self.__df_measures.append({'name': f'RF1', 'time': self.__rf1_time})
-        self.__log.info(f'Execution of refresh function 1 ended successful. Measured time: {self.__rf1_time}')
+            self._log.debug(f'Time for {order_query} query: {time_delta}')
+        self._df_measures.append({'name': f'RF1', 'time': self.__rf1_time}, ignore_index=True)
+        self._log.info(f'Execution of refresh function 1 ended successful. Measured time: {self.__rf1_time}')
 
     def execute_refresh_function2(self):
         return NotImplemented

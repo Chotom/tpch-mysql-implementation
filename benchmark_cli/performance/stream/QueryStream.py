@@ -16,17 +16,17 @@ class QueryStream(AbstractStream):
         self.__query_order: List[int] = QUERY_ORDER[stream_number]
 
     def load_data(self):
-        self.__log.info('Load queries...')
+        self._log.info('Load queries...')
 
         # Load queries from files to memory
         for i in range(0, 22):
-            with open(f'{self.__data_path}/{self.__query_order[i]}.sql') as query_file:
+            with open(f'{self._data_path}/{self.__query_order[i]}.sql') as query_file:
                 query = query_file.read()
-                self.__query_iter = self.__cursor.execute(query, multi=True)
-        self.__log.info('Queries loaded successfully...')
+                self.__query_iter = self._cursor.execute(query, multi=True)
+        self._log.info('Queries loaded successfully...')
 
     def execute_stream(self):
-        self.__log.info('Run query stream...')
+        self._log.info('Run query stream...')
 
         # Execute all queries
         for i in range(0, 22):
@@ -37,13 +37,13 @@ class QueryStream(AbstractStream):
             cursors = [cur for cur in self.__query_iter]  # for _ in cursors_generator: pass
 
             time_delta = datetime.datetime.now() - start
-            self.__measured_total_time += time_delta
-            self.__df_measures.append({'name': f'Q{self.__query_order[i]}', 'time': time_delta})
+            self._measured_total_time += time_delta
+            self._df_measures.append({'name': f'Q{self.__query_order[i]}', 'time': time_delta}, ignore_index=True)
 
             # Print additional information
-            self.__log.info(f'Time for query {self.__query_order[i]}: {time_delta}')
+            self._log.info(f'Time for query {self.__query_order[i]}: {time_delta}')
             for cur in cursors:
-                self.__log.debug(f'Cursor:\n {cur}')
+                self._log.debug(f'Cursor:\n {cur}')
                 if cur.with_rows:
-                    self.__log.debug(f'Results:\n {cur.fetchall()}')
-        self.__log.info(f'Execution of query stream ended successful. Measured time: {self.__measured_total_time}')
+                    self._log.debug(f'Results:\n {cur.fetchall()}')
+        self._log.info(f'Execution of query stream ended successful. Measured time: {self._measured_total_time}')
