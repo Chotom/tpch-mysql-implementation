@@ -8,12 +8,12 @@ from benchmark_cli.performance.stream.AbstractStream import AbstractStream
 
 
 class QueryStream(AbstractStream):
-    __query_iter: Optional[Generator[MySQLCursor, Any, None]]
 
     def __init__(self, logger_name: str, data_path: str, is_buffered: bool, stream_number: int):
         super().__init__(logger_name, data_path, is_buffered)
         self.__stream_number = stream_number
         self.__query_order: List[int] = QUERY_ORDER[stream_number]
+        self.__query_iter: List[Optional[Generator[MySQLCursor, Any, None]]] = []
 
     def load_data(self):
         self._log.info('Load queries...')
@@ -22,7 +22,7 @@ class QueryStream(AbstractStream):
         for i in range(0, 22):
             with open(f'{self._data_path}/{self.__query_order[i]}.sql') as query_file:
                 query = query_file.read()
-                self.__query_iter = self._cursor.execute(query, multi=True)
+                self.__query_iter.append(self._cursor.execute(query, multi=True))
         self._log.info('Queries loaded successfully...')
 
     def execute_stream(self):
@@ -34,7 +34,7 @@ class QueryStream(AbstractStream):
             start = datetime.datetime.now()
 
             # Iterate over generated cursors to execute them and get the results
-            cursors = [cur for cur in self.__query_iter]  # for _ in cursors_generator: pass
+            cursors = [cur for cur in self.__query_iter[i]]  # for _ in cursors_generator: pass
 
             time_delta = datetime.datetime.now() - start
             self._measured_total_time += time_delta
