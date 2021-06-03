@@ -10,10 +10,9 @@ from benchmark_cli.performance.utils import create_logger
 
 
 class AbstractStream(ABC):
-    def __init__(self, logger_name: str, data_path: str, is_buffered: bool):
+    def __init__(self, logger_name: str, is_buffered: bool):
         # Init
         self._log = create_logger(logger_name)
-        self._data_path = data_path
 
         # Set session
         try:

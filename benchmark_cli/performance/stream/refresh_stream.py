@@ -8,7 +8,7 @@ import mysql
 from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursorBuffered
 
-from benchmark_cli.performance.constants import ROOT_DIR, DB_CONFIG, ORDER_QUOTE_INDEX_LIST, LINEITEM_QUOTE_INDEX_LIST
+from benchmark_cli.performance.constants import ROOT_DIR, DB_CONFIG, ORDERS_QUOTE_INDEX_LIST, LINEITEM_QUOTE_INDEX_LIST
 from benchmark_cli.performance.utils import create_logger, data_row_to_query
 
 
@@ -29,7 +29,7 @@ def refresh_function_1(scale: float, connection: MySQLConnection, cursor: MySQLC
     with open(f'/db_refresh_data/orders.tbl.u{run_number}', 'r') as orders_file:
         orders_queries = orders_file.readlines()
         for i, values_row in enumerate(orders_queries):
-            orders_queries[i] = data_row_to_query(values_row, 'order', ORDER_QUOTE_INDEX_LIST)
+            orders_queries[i] = data_row_to_query(values_row, 'order', ORDERS_QUOTE_INDEX_LIST)
         orders_queries_iterator = iter(orders_queries)
 
     with open(f'/db_refresh_data/lineitem.tbl.u{run_number}', 'r') as lineitem_file:

@@ -3,14 +3,14 @@ from typing import Optional, Generator, Any, List
 
 from mysql.connector.cursor import MySQLCursorBuffered, MySQLCursor
 
-from benchmark_cli.performance.constants import QUERY_ORDER
+from benchmark_cli.performance.constants import QUERY_ORDER, QUERIES_DIR
 from benchmark_cli.performance.stream.AbstractStream import AbstractStream
 
 
 class QueryStream(AbstractStream):
 
-    def __init__(self, logger_name: str, data_path: str, is_buffered: bool, stream_number: int):
-        super().__init__(logger_name, data_path, is_buffered)
+    def __init__(self, logger_name: str, stream_number: int):
+        super().__init__(logger_name, True)
         self.__stream_number = stream_number
         self.__query_order: List[int] = QUERY_ORDER[stream_number]
         self.__query_iter: List[Optional[Generator[MySQLCursor, Any, None]]] = []
@@ -20,7 +20,7 @@ class QueryStream(AbstractStream):
 
         # Load queries from files to memory
         for i in range(0, 22):
-            with open(f'{self._data_path}/{self.__query_order[i]}.sql') as query_file:
+            with open(f'{QUERIES_DIR}/{self.__query_order[i]}.sql') as query_file:
                 query = query_file.read()
                 self.__query_iter.append(self._cursor.execute(query, multi=True))
         self._log.info('Queries loaded successfully...')
