@@ -26,6 +26,14 @@ def data_row_to_query(row: str, table_name: str, quoted_values_indexes: List[int
     return int(values[0]), f'INSERT INTO `{table_name}` VALUES ({MYSQL_VALUE_SEP.join(values)});'
 
 
+def delete_row_to_query(delete_row: str) -> str:
+    id = delete_row.rstrip('\n|')
+    # return f'DELETE FROM `orders`, `lineitem`' \
+    #        f'USING `orders` INNER JOIN `lineitem` ON `orders`.`o_orderkey` = `l_orderkey`' \
+    #        f'WHERE O_ORDERKEY = {id};'
+    return f'DELETE FROM `lineitem` WHERE l_orderkey = {id}; DELETE FROM `orders` WHERE o_orderkey = {id};'
+
+
 def create_logger(name: str) -> logging.Logger:
     """
     Create logger for given name
