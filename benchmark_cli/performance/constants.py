@@ -4,7 +4,7 @@
 import logging
 import os
 
-LOG_LEVEL = logging.DEBUG
+LOG_LEVEL = logging.INFO
 """Message logging level"""
 
 DB_CONFIG = {

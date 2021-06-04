@@ -1,6 +1,7 @@
 import datetime
 from typing import Optional, Generator, Any, List
 
+from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursorBuffered, MySQLCursor
 
 from benchmark_cli.performance.constants import QUERY_ORDER, QUERIES_DIR
@@ -9,8 +10,8 @@ from benchmark_cli.performance.stream.AbstractStream import AbstractStream
 
 class QueryStream(AbstractStream):
 
-    def __init__(self, logger_name: str, stream_number: int):
-        super().__init__(logger_name, True)
+    def __init__(self, logger_name: str, stream_number: int, conn: MySQLConnection = None, cursor: MySQLCursor = None):
+        super().__init__(logger_name, True, conn, cursor)
         self.__stream_number = stream_number
         self.__query_order: List[int] = QUERY_ORDER[stream_number]
         self.__query_iter: List[Optional[Generator[MySQLCursor, Any, None]]] = []
@@ -38,7 +39,7 @@ class QueryStream(AbstractStream):
 
             time_delta = datetime.datetime.now() - start
             self._measured_total_time += time_delta
-            self._df_measures.append({'name': f'Q{self.__query_order[i]}', 'time': time_delta}, ignore_index=True)
+            self._df_measures = self._df_measures.append({'name': f'Q{self.__query_order[i]}', 'time': time_delta}, ignore_index=True)
 
             # Print additional information
             self._log.info(f'Time for query {self.__query_order[i]}: {time_delta}')

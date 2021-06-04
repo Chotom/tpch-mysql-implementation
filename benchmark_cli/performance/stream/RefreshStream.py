@@ -33,9 +33,10 @@ class RefreshStream(AbstractStream):
     def execute_stream(self):
         self._log.info('Run refresh stream...')
 
-        for refresh_pair in self.__refresh_pairs:
+        for i, refresh_pair in enumerate(self.__refresh_pairs):
             refresh_pair.execute_pair()
-            # todo: get time of execution
-            self._measured_total_time += 0
+            rpair_time = refresh_pair.df_measures.at['total_time', 'time']
+            self._df_measures = self._df_measures.append({'name': f'RP_{i}', 'time': rpair_time}, ignore_index=True)
+            self._measured_total_time += rpair_time
 
         self._log.info(f'Execution of refresh stream ended successful. Measured time: {self._measured_total_time}')
