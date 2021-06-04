@@ -11,16 +11,16 @@ class RefreshStream(AbstractStream):
     __orders_queries_iter: Iterator[str]
     __lineitem_queries_iter: Iterator[str]
 
-    def __init__(self, logger_name: str, S: int):
+    def __init__(self, logger_name: str, stream_count: int, refresh_file_start_index: int):
         super().__init__(logger_name, False)
-        self.__S = S
+        self.__S = stream_count
         self.__rf1_time = datetime.timedelta(0)
         self.__rf2_time = datetime.timedelta(0)
 
         self.__refresh_pairs = []
 
-        for i in range(S):
-            self.__refresh_pairs.append(RefreshPair(logger_name + f'[{i + 1}]', i + 1, self._connection, self._cursor))
+        for i in range(stream_count):
+            self.__refresh_pairs.append(RefreshPair(f'refresh_pair_{i + 1}', i + refresh_file_start_index, self._connection, self._cursor))
 
     def load_data(self):
         self._log.info('Load queries...')
