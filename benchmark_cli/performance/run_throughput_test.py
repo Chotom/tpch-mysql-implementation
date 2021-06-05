@@ -1,4 +1,4 @@
-import subprocess
+import datetime
 from threading import Thread
 
 from benchmark_cli.performance.constants import ROOT_DIR
@@ -27,6 +27,8 @@ def run_throughput_test(stream_number: int, refresh_file_start_index: int = 2):
         streams[i].load_data()
         processes.append(Thread(target=streams[i].execute_stream))
 
+    start = datetime.datetime.now()
+
     # Execute streams in parallel
     for i in range(len(streams)):
         processes[i].start()
@@ -35,11 +37,20 @@ def run_throughput_test(stream_number: int, refresh_file_start_index: int = 2):
     for proc in processes:
         proc.join()
 
+    total_time = datetime.datetime.now() - start
+
     log.info(f'Refresh stream time:\n {streams[0].df_measures}\n\n')
     for i in range(len(streams[1:])):
         log.info(f'Stream {i} time:\n {streams[i].df_measures}\n\n')
 
-    total_time = 0
-    for stream in streams:
-        total_time += stream.df_measures.at['total_time', 'time']
     log.info(f'Throughput test ended for {stream_number} streams. Total time: {total_time}')
+
+    SCALE_FACTOR = 0.1
+    throughput_size = stream_number * 22 * 3600 * SCALE_FACTOR / total_time.total_seconds()
+    log.info(f'Throughput@Size: {throughput_size}')
+
+    # this is extremely bad probably
+    # total_time = 0
+    # for stream in streams:
+    #     total_time += stream.df_measures.at['total_time', 'time']
+    # log.info(f'Throughput test ended for {stream_number} streams. Total time: {total_time}')

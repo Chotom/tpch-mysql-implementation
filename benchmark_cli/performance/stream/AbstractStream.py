@@ -54,7 +54,7 @@ class AbstractStream(ABC):
         """
         :return: dataframe with measured queries and total_time of execution
         """
-        return self._df_measures.append({'name': f'total_time', 'time': self._measured_total_time}, ignore_index=True).set_index('name')
+        return self._df_measures.append({'name': 'total_time', 'time': self._measured_total_time}, ignore_index=True).set_index('name')
 
     def __del__(self):
         self._cursor.reset()

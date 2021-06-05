@@ -1,5 +1,7 @@
 import subprocess
 
+import numpy as np
+
 import mysql.connector
 from mysql.connector import MySQLConnection
 
@@ -38,19 +40,11 @@ def run_power_test(refresh_file_start_index: int = 1):
     log.info(f"refresh_pair total_time: {refresh_pair.df_measures.at['total_time', 'time']}")
     log.info(f'query_stream time:\n {query_stream.df_measures}')
     log.info(f"query_stream total_time: {query_stream.df_measures.at['total_time', 'time']}")
-    log.info(f"query_stream total_time: {query_stream.df_measures['time'].array}")
 
-    # query_stream = QueryStream('query_stream_0', 0)
-    # query_stream.load_data()
-    # # Run queries
-    # query_stream.execute_stream()
-
-    # refresh_stream = RefreshStream('refresh_stream_0', 1)
-    # refresh_stream.load_data()
-    # refresh_stream.execute_stream()
-
-    # todo: Run refresh function 1
-    # refresh_function_1(...)
-
-    # todo: Run refresh function 2
-    # refresh_function_2(...)
+    # calculate power@size
+    SCALE_FACTOR = 0.1
+    geometric_mean = np.prod(query_stream.df_measures.drop(['total_time'])['time'].apply(lambda x: x.total_seconds()))\
+                     * np.prod(refresh_pair.df_measures.drop(['total_time'])['time'].apply(lambda x: x.total_seconds()))\
+                     ** (1 / 24)
+    power_size = 3600 * SCALE_FACTOR / geometric_mean
+    log.info(f'Power@Size: {power_size}')
