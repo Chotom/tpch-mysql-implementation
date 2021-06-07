@@ -10,15 +10,15 @@ def generate_data(stream_count : int):
 
     # generate database bulk load
     # call dbgen with scale factor
-    subprocess.run([f'{DBGEN_DIR}/dbgen',
-                    '-vf',
-                    '-s', f'{SCALE_FACTOR}'],
-                   cwd=DBGEN_DIR)
-    # create folder for data if not exist
-    Path(DATA_DIR).mkdir(parents=True, exist_ok=True)
-    # move generated data to data folder
-    for file in glob.glob(f'{DBGEN_DIR}/*.tbl'):
-        shutil.move(file, f'{DATA_DIR}/{os.path.basename(file)}')
+    # subprocess.run([f'{DBGEN_DIR}/dbgen',
+    #                 '-vf',
+    #                 '-s', f'{SCALE_FACTOR}'],
+    #                cwd=DBGEN_DIR)
+    # # create folder for data if not exist
+    # Path(DATA_DIR).mkdir(parents=True, exist_ok=True)
+    # # move generated data to data folder
+    # for file in glob.glob(f'{DBGEN_DIR}/*.tbl'):
+    #     shutil.move(file, f'{DATA_DIR}/{os.path.basename(file)}')
 
     # generate updates
     # call dbgen with scale factor and updates

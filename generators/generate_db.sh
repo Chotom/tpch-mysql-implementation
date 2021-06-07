@@ -1,5 +1,5 @@
 #!/bin/bash
-SCALE_FACTOR=0.1
+SCALE_FACTOR=1
 
 cd /tpch_tools/dbgen
 
@@ -14,11 +14,11 @@ mv ./*.tbl /db_data
 echo "Create tables in $MYSQL_HOST..."
 mysql -h $MYSQL_HOST -P $PORT -uroot -p1234 < dss.ddl
 
+echo "Create indexes and relations..."
+mysql -h $MYSQL_HOST -P $PORT -uroot -p1234 < dss.ri
+
 echo "Loading data..."
 mysql -h $MYSQL_HOST -P $PORT -p1234 -D tpcd -e "SET GLOBAL local_infile=true"
 mysql -h $MYSQL_HOST -P $PORT -uroot -p1234 --local-infile < loaddata.sql
-
-echo "Create indexes and relations..."
-mysql -h $MYSQL_HOST -P $PORT -uroot -p1234 < dss.ri
 
 echo "script ended successfully."
