@@ -4,6 +4,10 @@
 import logging
 import os
 
+SCALE_FACTOR = 0.1
+#STREAM_COUNT = 1
+START_SEED = 1
+
 LOG_LEVEL = logging.INFO
 """Message logging level"""
 
@@ -18,6 +22,12 @@ DB_CONFIG = {
 
 ROOT_DIR = f''
 """Project root dir"""
+
+DBGEN_DIR = f'{ROOT_DIR}/tpch_tools/dbgen'
+"""Directory for TPC-H dbgen and qgen"""
+
+DATA_DIR = f'{ROOT_DIR}/db_data'
+"""Directory for generated data"""
 
 QUERIES_DIR = f'{ROOT_DIR}/db_queries'
 """Directory for generated queries"""
