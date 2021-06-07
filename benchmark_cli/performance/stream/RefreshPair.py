@@ -78,7 +78,6 @@ class RefreshPair:
 
         # Execute insert queries
         for query in self.__insert_queries_iter:
-            self._log.debug(f'Query: {query}')
             # Insert new order into `orders` and its items into `lineitem`
             cursors_generator = self._cursor.execute(query, multi=True)
 
@@ -103,7 +102,6 @@ class RefreshPair:
 
         # Execute delete queries
         for query in self.__delete_queries_iter:
-            self._log.debug(f'Query: {query}')
             # Delete order from `orders` and its items from `lineitem`
             cursors_generator = self._cursor.execute(query, multi=True)
 

@@ -3,21 +3,19 @@ import subprocess
 import numpy as np
 
 import mysql.connector
+import pandas as pd
 from mysql.connector import MySQLConnection
 
-from benchmark_cli.performance.constants import DB_CONFIG, ROOT_DIR, QUERIES_DIR
+from benchmark_cli.performance.constants import DB_CONFIG, ROOT_DIR, QUERIES_DIR, RESULTS_DIR, SCALE_FACTOR
 from benchmark_cli.performance.stream.QueryStream import QueryStream
 from benchmark_cli.performance.stream.RefreshPair import RefreshPair
 from benchmark_cli.performance.stream.RefreshStream import RefreshStream
 from benchmark_cli.performance.utils import create_logger
 
 
-def run_power_test(refresh_file_start_index: int = 1):
+def run_power_test(refresh_file_start_index: int = 1) -> float:
     log = create_logger('power_test')
     log.info('Start power test...')
-
-    # Generate queries
-    subprocess.run([f'{ROOT_DIR}/generators/generate_queries.sh'])
 
     try:
         connection = MySQLConnection(**DB_CONFIG)
@@ -40,11 +38,12 @@ def run_power_test(refresh_file_start_index: int = 1):
     log.info(f"refresh_pair total_time: {refresh_pair.df_measures.at['total_time', 'time']}")
     log.info(f'query_stream time:\n {query_stream.df_measures}')
     log.info(f"query_stream total_time: {query_stream.df_measures.at['total_time', 'time']}")
+    df_power_test_results: pd.DataFrame = query_stream.df_measures.drop(['total_time']).append(refresh_pair.df_measures.drop(['total_time']))
+    df_power_test_results.to_csv(f'{RESULTS_DIR}/power_test.csv')
 
     # calculate power@size
-    SCALE_FACTOR = 0.1
-    geometric_mean = np.prod(query_stream.df_measures.drop(['total_time'])['time'].apply(lambda x: x.total_seconds()))\
-                     * np.prod(refresh_pair.df_measures.drop(['total_time'])['time'].apply(lambda x: x.total_seconds()))\
-                     ** (1 / 24)
+    geometric_mean = np.prod(df_power_test_results['time'].apply(lambda x: x.total_seconds())) ** (1 / 24)
     power_size = 3600 * SCALE_FACTOR / geometric_mean
-    log.info(f'Power@Size: {power_size}')
+    log.info(f'Power@{SCALE_FACTOR}GB: {power_size}')
+
+    return power_size

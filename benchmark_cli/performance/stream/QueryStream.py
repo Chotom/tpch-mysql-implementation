@@ -21,7 +21,7 @@ class QueryStream(AbstractStream):
 
         # Load queries from files to memory
         for i in range(0, 22):
-            with open(f'{QUERIES_DIR}/{self.__query_order[i]}.sql') as query_file:
+            with open(f'{QUERIES_DIR}/{self.__stream_number}/{i + 1}.sql') as query_file:
                 query = query_file.read()
                 self.__query_iter.append(self._cursor.execute(query, multi=True))
         self._log.info('Queries loaded successfully...')

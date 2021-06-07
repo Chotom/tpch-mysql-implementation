@@ -35,6 +35,9 @@ QUERIES_DIR = f'{ROOT_DIR}/db_queries'
 REFRESH_DATA_DIR = f'{ROOT_DIR}/db_refresh_data'
 """Directory for generated refresh data"""
 
+RESULTS_DIR = f'{ROOT_DIR}/benchmark_cli/performance/results'
+"""Directory for performance test results"""
+
 MYSQL_VALUE_SEP = ','
 """Data values separator in mysql dialect"""
 

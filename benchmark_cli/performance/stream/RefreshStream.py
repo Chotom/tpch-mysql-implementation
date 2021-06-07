@@ -16,11 +16,12 @@ class RefreshStream(AbstractStream):
         self.__S = stream_count
         self.__rf1_time = datetime.timedelta(0)
         self.__rf2_time = datetime.timedelta(0)
+        self.__file_start_index = refresh_file_start_index
 
         self.__refresh_pairs = []
 
         for i in range(stream_count):
-            self.__refresh_pairs.append(RefreshPair(f'refresh_pair_{i + 1}', i + refresh_file_start_index, self._connection, self._cursor))
+            self.__refresh_pairs.append(RefreshPair(f'refresh_pair_{i + 1}', i + self.__file_start_index , self._connection, self._cursor))
 
     def load_data(self):
         self._log.info('Load queries...')
@@ -36,7 +37,8 @@ class RefreshStream(AbstractStream):
         for i, refresh_pair in enumerate(self.__refresh_pairs):
             refresh_pair.execute_pair()
             rpair_time = refresh_pair.df_measures.at['total_time', 'time']
-            self._df_measures = self._df_measures.append({'name': f'RP_{i}', 'time': rpair_time}, ignore_index=True)
+            self._df_measures = self._df_measures.append({'name': f'RF1_{i}', 'time': refresh_pair.df_measures.at[f'RF1_{i + self.__file_start_index }', 'time']}, ignore_index=True)
+            self._df_measures = self._df_measures.append({'name': f'RF2_{i}', 'time': refresh_pair.df_measures.at[f'RF2_{i + self.__file_start_index }', 'time']}, ignore_index=True)
             self._measured_total_time += rpair_time
 
         self._log.info(f'Execution of refresh stream ended successful. Measured time: {self._measured_total_time}')
