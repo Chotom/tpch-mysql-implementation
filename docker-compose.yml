@@ -5,8 +5,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
-          memory: 16G
+          cpus: '4'
+          memory: 4G
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     ports:
@@ -21,9 +21,9 @@ services:
     ports:
       - 8080:8080
 
-  benchmark:
+  benchmark_tpch:
+    image: rl-database-indexing_benchmark # image after docker compose build
     build: .
-    container_name: benchmark_tpch
     tty: true
     environment:
       MYSQL_HOST: mysql_server

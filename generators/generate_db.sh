@@ -1,5 +1,5 @@
 #!/bin/bash
-SCALE_FACTOR=1
+SCALE_FACTOR=0.1
 
 cd /tpch_tools/dbgen
 
