@@ -62,6 +62,5 @@ RL-database-indexing
 │   └── run_queries.sh
 ├── requirements.txt
 └── tpch_tools                                  - official TPC-H tools directory - download from http://tpc.org/tpc_documents_current_versions/current_specifications5.asp
-    └── dbgen                                   - make sure dbgen.c file goes into this directory
-        └── .gitkeep
+    └── .gitkeep
 ```
