@@ -6,6 +6,7 @@ from benchmark_cli.performance.generate_data import generate_data
 
 
 def run_benchmark(stream_count: int):
+    """Generate data for benchmark and execute two performance tests for more accurate results"""
     generate_data(stream_count)
 
     for i in range(2):

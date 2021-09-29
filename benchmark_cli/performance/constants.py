@@ -5,7 +5,7 @@ import logging
 import os
 
 SCALE_FACTOR = 0.1
-#STREAM_COUNT = 1
+# STREAM_COUNT = 1
 START_SEED = 1
 
 LOG_LEVEL = logging.INFO

@@ -25,16 +25,15 @@ Run containers:
 docker-compose up
 ```
 
-Run containers:
+Enter container:
 ```shell
-docker-compose up
+...
 ```
 
 Generate database to test (in benchmark container):
 ```shell
 generators/generate_db.sh
 ```
-
 
 Run performance test (in benchmark container):
 ```shell

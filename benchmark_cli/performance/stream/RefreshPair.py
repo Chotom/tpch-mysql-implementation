@@ -123,8 +123,5 @@ class RefreshPair:
 
     @property
     def df_measures(self) -> pd.DataFrame:
-        """
-        :return: dataframe with measured queries and total_time of execution
-        """
-
-        return self._df_measures.append({'name': 'total_time', 'time': self.__rf1_time + self.__rf2_time}, ignore_index=True).set_index('name')
+        """:return: dataframe with measured queries and total_time of execution"""
+        return self._df_measures.set_index('name')

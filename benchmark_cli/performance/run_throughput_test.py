@@ -1,8 +1,6 @@
 import datetime
 from threading import Thread
 
-import pandas as pd
-
 from benchmark_cli.performance.constants import ROOT_DIR, RESULTS_DIR, SCALE_FACTOR
 from benchmark_cli.performance.stream.QueryStream import QueryStream
 from benchmark_cli.performance.stream.RefreshStream import RefreshStream
@@ -52,5 +50,5 @@ def run_throughput_test(stream_count: int, refresh_file_start_index: int = 2) ->
     df_throughput_test_results.to_csv(f'{RESULTS_DIR}/throughput_test.csv')
 
     throughput_size = stream_count * 22 * 3600 * SCALE_FACTOR / total_time.total_seconds()
-    log.info(f'Throughput@{SCALE_FACTOR}GB: {throughput_size}')
+
     return throughput_size
