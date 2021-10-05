@@ -1,11 +1,10 @@
-"""Various performance module constants
+"""Various benchmark module constants
 """
 
 import logging
 import os
 
 SCALE_FACTOR = 0.1
-# STREAM_COUNT = 1
 START_SEED = 1
 
 LOG_LEVEL = logging.INFO
@@ -15,13 +14,16 @@ DB_CONFIG = {
     'user': 'root',
     'password': '1234',
     'host': os.getenv('MYSQL_HOST'),
-    'port': os.getenv('PORT', ),
+    'port': os.getenv('PORT'),
     'database': os.getenv('DB')
 }
 """Database connection config"""
 
-ROOT_DIR = f''
+ROOT_DIR = ''
 """Project root dir"""
+
+CONFIG_FILE_PATH = f'{ROOT_DIR}/benchmark_cli/config.yml'
+"""Path to file with benchmark config"""
 
 DBGEN_DIR = f'{ROOT_DIR}/tpch_tools/dbgen'
 """Directory for TPC-H dbgen and qgen"""
@@ -35,10 +37,13 @@ QUERIES_DIR = f'{ROOT_DIR}/db_queries'
 REFRESH_DATA_DIR = f'{ROOT_DIR}/db_refresh_data'
 """Directory for generated refresh data"""
 
-RESULTS_DIR = f'{ROOT_DIR}/benchmark_cli/performance/results'
-"""Directory for performance test results"""
+RESULTS_DIR = f'{ROOT_DIR}/benchmark_cli/results'
+"""Directory for benchmark test results"""
 
 MYSQL_VALUE_SEP = ','
+"""Data values separator in mysql dialect"""
+
+MAX_REFRESH_FILE_INDEX = 100
 """Data values separator in mysql dialect"""
 
 ORDERS_QUOTE_INDEX_LIST = [2, 4, 5, 6, 8]

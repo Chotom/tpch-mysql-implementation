@@ -1,5 +1,11 @@
 import fire
-from performance import *
+
+from benchmark_cli.benchmark.BenchmarkRunner import BenchmarkRunner
+
+
+def run_benchmark():
+    benchmark = BenchmarkRunner()
+    benchmark.run_benchmark()
 
 
 if __name__ == '__main__':

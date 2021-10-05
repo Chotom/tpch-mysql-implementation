@@ -1,11 +1,12 @@
-"""Utility functions for performance module
+"""Utility functions for benchmark module
 """
+import datetime
 import logging
 import mysql.connector
 from typing import List
 from mysql.connector import MySQLConnection
 
-from benchmark_cli.performance.constants import LOG_LEVEL, MYSQL_VALUE_SEP, DB_CONFIG
+from benchmark_cli.constants import LOG_LEVEL, MYSQL_VALUE_SEP, DB_CONFIG
 
 
 def data_row_to_query(row: str, table_name: str, quoted_values_indexes: List[int]) -> (int, str):
@@ -39,6 +40,11 @@ def get_connection(log: logging.Logger, is_buffered: bool):
         raise
     log.info('Database connected successful.')
     return connection, cursor
+
+
+def get_timestamp() -> str:
+    """:return: current date in '%Y%m%d%H%M%S' format."""
+    return datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 
 
 def delete_row_to_query(delete_row: str) -> str:

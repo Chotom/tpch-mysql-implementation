@@ -1,5 +1,0 @@
-todo:
-run generate queries scripts
-measure performance for:
-- power test - insert query, run 22 queries, delete query
-- throughput test - run unesrt, delete and 22 queries in pararell

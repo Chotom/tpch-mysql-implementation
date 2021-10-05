@@ -7,7 +7,7 @@ RL-database-indexing
 ├── benchmark_cli                               - python cli for the benchmark
 │   ├── __init__.py
 │   ├── cli.py
-│   └── performance
+│   └── benchmark
 │       ├── __init__.py
 │       ├── constants.py
 │       ├── generate_data.py

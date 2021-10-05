@@ -2,10 +2,10 @@ import subprocess, glob, shutil
 
 from pathlib import Path
 
-from benchmark_cli.performance.constants import *
+from benchmark_cli.constants import *
 
 
-def generate_data(stream_count : int):
+def generate_data(stream_count: int):
     updates = (stream_count + 1) * 2
 
     # generate database bulk load

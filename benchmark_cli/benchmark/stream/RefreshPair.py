@@ -1,14 +1,13 @@
 import datetime
 from typing import Iterator
 
-import mysql.connector
 import numpy as np
 import pandas as pd
 from mysql.connector import MySQLConnection
-from mysql.connector.cursor import MySQLCursorBuffered, MySQLCursor
+from mysql.connector.cursor import MySQLCursorBuffered
 
-from benchmark_cli.performance.constants import ORDERS_QUOTE_INDEX_LIST, LINEITEM_QUOTE_INDEX_LIST, REFRESH_DATA_DIR
-from benchmark_cli.performance.utils import data_row_to_query, delete_row_to_query, create_logger
+from benchmark_cli.constants import ORDERS_QUOTE_INDEX_LIST, LINEITEM_QUOTE_INDEX_LIST, REFRESH_DATA_DIR
+from benchmark_cli.utils import data_row_to_query, delete_row_to_query, create_logger
 
 
 class RefreshPair:

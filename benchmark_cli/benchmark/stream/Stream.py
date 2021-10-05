@@ -1,21 +1,18 @@
-import datetime
 from abc import ABC, abstractmethod
 import pandas as pd
 import numpy as np
-import mysql.connector
 from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 
-from benchmark_cli.performance.constants import DB_CONFIG
-from benchmark_cli.performance.utils import create_logger, get_connection
+from benchmark_cli.utils import create_logger, get_connection
 
 
-class AbstractStream(ABC):
+class Stream(ABC):
 
     def __init__(self, logger_name: str, is_buffered: bool, conn: MySQLConnection = None, cursor: MySQLCursor = None):
         self._log = create_logger(logger_name)
-        self._df_measures = pd.DataFrame(columns=['name', 'time'], dtype=np.dtype(str, np.timedelta64)).set_index('name')
-        self.__set_session__(is_buffered, conn, cursor)
+        self._df_measures = pd.DataFrame(columns=['name', 'time'], dtype=np.dtype(str, np.timedelta64))
+        self.__set_session(is_buffered, conn, cursor)
 
     @abstractmethod
     def load_data(self):
@@ -24,7 +21,7 @@ class AbstractStream(ABC):
 
     @abstractmethod
     def execute_stream(self):
-        """Execute queries in database and measure performance."""
+        """Execute queries in database and measure benchmark."""
         return NotImplemented
 
     @property
@@ -32,7 +29,12 @@ class AbstractStream(ABC):
         """:return: dataframe with measured time execution of queries."""
         return self._df_measures.set_index('name')
 
-    def __set_session__(self, is_buffered: bool, conn: MySQLConnection, cursor: MySQLCursor):
+    @df_measures.setter
+    def df_measures(self, value: pd.DataFrame):
+        """Set dataframe with measures"""
+        self._df_measures = value.reset_index()
+
+    def __set_session(self, is_buffered: bool, conn: MySQLConnection, cursor: MySQLCursor):
         if conn is not None and cursor is not None:
             self._connection, self._cursor = conn, cursor
         elif conn is None and cursor is None:

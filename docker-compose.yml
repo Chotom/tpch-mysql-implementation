@@ -14,13 +14,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 1234
 
-
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
-
   benchmark_tpch:
     image: rl-database-indexing_benchmark # image after docker compose build
     build: .

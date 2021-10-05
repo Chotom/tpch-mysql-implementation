@@ -1,0 +1,2 @@
+from benchmark_cli.benchmark.run_power_test import run_power_test
+from benchmark_cli.benchmark.run_throughput_test import run_throughput_test

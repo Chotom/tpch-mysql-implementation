@@ -1,14 +1,15 @@
 import datetime
 from typing import Optional, Generator, Any, List
 
+import pandas as pd
 from mysql.connector import MySQLConnection
-from mysql.connector.cursor import MySQLCursorBuffered, MySQLCursor
+from mysql.connector.cursor import MySQLCursor
 
-from benchmark_cli.performance.constants import QUERY_ORDER, QUERIES_DIR
-from benchmark_cli.performance.stream.AbstractStream import AbstractStream
+from benchmark_cli.constants import QUERY_ORDER, QUERIES_DIR
+from benchmark_cli.benchmark.stream.Stream import Stream
 
 
-class QueryStream(AbstractStream):
+class QueryStream(Stream):
 
     def __init__(self, logger_name: str, stream_number: int, conn: MySQLConnection = None, cursor: MySQLCursor = None):
         super().__init__(logger_name, True, conn, cursor)
@@ -38,8 +39,9 @@ class QueryStream(AbstractStream):
             cursors = [cur for cur in self.__query_iter[i]]  # for _ in cursors_generator: pass
 
             time_delta = datetime.datetime.now() - start
-            self._measured_total_time += time_delta
-            self._df_measures = self._df_measures.append({'name': f'Q{self.__query_order[i]}', 'time': time_delta}, ignore_index=True)
+            self._df_measures: pd.DataFrame = (
+                self._df_measures.append({'name': f'Q{self.__query_order[i]}', 'time': time_delta}, ignore_index=True)
+            )
 
             # Print additional information
             self._log.info(f'Time for query {self.__query_order[i]}: {time_delta}')
@@ -47,4 +49,4 @@ class QueryStream(AbstractStream):
                 self._log.debug(f'Cursor:\n {cur}')
                 if cur.with_rows:
                     self._log.debug(f'Results:\n {cur.fetchall()}')
-        self._log.info(f'Execution of query stream ended successful. Measured time: {self._measured_total_time}')
+        self._log.info(f'Execution of query stream ended successful. Measured time: {self._df_measures["time"].sum()}')

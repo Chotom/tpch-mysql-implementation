@@ -27,7 +27,7 @@ docker-compose up
 
 Enter container:
 ```shell
-...
+docker exec -it rl-database-indexing_benchmark_tpch_1 /bin/bash
 ```
 
 Generate database to test (in benchmark container):
@@ -35,10 +35,17 @@ Generate database to test (in benchmark container):
 generators/generate_db.sh
 ```
 
+Define values in config file:
+```yaml
+refresh_file_index: 1
+start_seed: 1
+stream_count: 2
+```
+
 Run performance test (in benchmark container):
 ```shell
 python3 benchmark_cli/cli.py --help
-python3 benchmark_cli/cli.py run_benchmark 2
+python3 benchmark_cli/cli.py run_benchmark
 ```
 
 
