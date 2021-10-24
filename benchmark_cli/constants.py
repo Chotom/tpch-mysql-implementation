@@ -43,7 +43,7 @@ RESULTS_DIR = f'{ROOT_DIR}/benchmark_cli/results'
 MYSQL_VALUE_SEP = ','
 """Data values separator in mysql dialect"""
 
-MAX_REFRESH_FILE_INDEX = 100
+MAX_REFRESH_FILE_INDEX = 4000
 """Data values separator in mysql dialect"""
 
 ORDERS_QUOTE_INDEX_LIST = [2, 4, 5, 6, 8]

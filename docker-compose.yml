@@ -23,5 +23,4 @@ services:
       PORT: 3306
       DB: tpcd
     volumes:
-      - ./generators:/generators
       - ./benchmark_cli:/benchmark_cli

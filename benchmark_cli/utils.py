@@ -1,12 +1,10 @@
 """Utility functions for benchmark module
 """
-import datetime
-import logging
-import mysql.connector
-from typing import List
+import datetime, logging, mysql
 from mysql.connector import MySQLConnection
+from typing import List
 
-from benchmark_cli.constants import LOG_LEVEL, MYSQL_VALUE_SEP, DB_CONFIG
+from benchmark_cli.constants import LOG_LEVEL, MYSQL_VALUE_SEP, DB_CONFIG, DATA_DIR
 
 
 def data_row_to_query(row: str, table_name: str, quoted_values_indexes: List[int]) -> (int, str):
@@ -33,7 +31,11 @@ def get_connection(log: logging.Logger, is_buffered: bool):
     """:return: Connection with cursor as tuple"""
     log.info('Trying to connect to database...')
     try:
-        connection = MySQLConnection(**DB_CONFIG)
+        connection = MySQLConnection()
+        # allow loading files from local input files
+        connection.connect(**DB_CONFIG, allow_local_infile=True)
+        connection.set_allow_local_infile_in_path("/")
+
         cursor = connection.cursor(buffered=is_buffered)
     except mysql.connector.Error as e:
         log.error(f'Cannot connect to database: {e}')
@@ -52,7 +54,7 @@ def delete_row_to_query(delete_row: str) -> str:
     # return f'DELETE FROM `orders`, `lineitem`' \
     #        f'USING `orders` INNER JOIN `lineitem` ON `orders`.`o_orderkey` = `l_orderkey`' \
     #        f'WHERE O_ORDERKEY = {id};'
-    return f'DELETE FROM `lineitem` WHERE l_orderkey = {id}; DELETE FROM `orders` WHERE o_orderkey = {id};'
+    return f'DELETE FROM lineitem WHERE l_orderkey = {id}; DELETE FROM orders WHERE o_orderkey = {id};'
 
 
 def create_logger(name: str) -> logging.Logger:

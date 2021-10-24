@@ -32,7 +32,7 @@ docker exec -it rl-database-indexing_benchmark_tpch_1 /bin/bash
 
 Generate database to test (in benchmark container):
 ```shell
-generators/generate_db.sh
+python3 benchmark_cli/cli.py generate_database
 ```
 
 Define values in config file:

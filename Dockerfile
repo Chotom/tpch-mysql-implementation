@@ -8,7 +8,6 @@ RUN true \
     && apt-get -y install pip
 
 COPY requirements.txt requirements.txt
-COPY generators /generators
 COPY benchmark_cli /benchmark_cli
 COPY tpch_tools /tpch_tools
 COPY dbgen_mysql_patch /tpch_tools/dbgen

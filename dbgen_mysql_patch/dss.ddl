@@ -1,26 +1,18 @@
 -- Sccsid:     @(#)dss.ddl	2.1.8.1
--- Create database tables for mysql
--- DROP DATABASE tpcd;
-CREATE DATABASE IF NOT EXISTS tpcd;
-USE tpcd;
-
-CREATE TABLE IF NOT EXISTS nation
-(
+CREATE TABLE IF NOT EXISTS nation (
     n_nationkey INTEGER  NOT NULL,
     n_name      CHAR(25) NOT NULL,
     n_regionkey INTEGER  NOT NULL,
     n_comment   VARCHAR(152)
 );
 
-CREATE TABLE IF NOT EXISTS region
-(
+CREATE TABLE IF NOT EXISTS region (
     r_regionkey INTEGER  NOT NULL,
     r_name      CHAR(25) NOT NULL,
     r_comment   VARCHAR(152)
 );
 
-CREATE TABLE IF NOT EXISTS part
-(
+CREATE TABLE IF NOT EXISTS part (
     p_partkey     INTEGER        NOT NULL,
     p_name        VARCHAR(55)    NOT NULL,
     p_mfgr        CHAR(25)       NOT NULL,
@@ -32,8 +24,7 @@ CREATE TABLE IF NOT EXISTS part
     p_comment     VARCHAR(23)    NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS supplier
-(
+CREATE TABLE IF NOT EXISTS supplier (
     s_suppkey   INTEGER        NOT NULL,
     s_name      CHAR(25)       NOT NULL,
     s_address   VARCHAR(40)    NOT NULL,
@@ -43,8 +34,7 @@ CREATE TABLE IF NOT EXISTS supplier
     s_comment   VARCHAR(101)   NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS partsupp
-(
+CREATE TABLE IF NOT EXISTS partsupp (
     ps_partkey    INTEGER        NOT NULL,
     ps_suppkey    INTEGER        NOT NULL,
     ps_availqty   INTEGER        NOT NULL,
@@ -52,8 +42,7 @@ CREATE TABLE IF NOT EXISTS partsupp
     ps_comment    VARCHAR(199)   NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS customer
-(
+CREATE TABLE IF NOT EXISTS customer (
     c_custkey    INTEGER        NOT NULL,
     c_name       VARCHAR(25)    NOT NULL,
     c_address    VARCHAR(40)    NOT NULL,
@@ -64,8 +53,7 @@ CREATE TABLE IF NOT EXISTS customer
     c_comment    VARCHAR(117)   NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS orders
-(
+CREATE TABLE IF NOT EXISTS orders (
     o_orderkey      INTEGER        NOT NULL,
     o_custkey       INTEGER        NOT NULL,
     o_orderstatus   CHAR(1)        NOT NULL,
@@ -77,8 +65,7 @@ CREATE TABLE IF NOT EXISTS orders
     o_comment       VARCHAR(79)    NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS lineitem
-(
+CREATE TABLE IF NOT EXISTS lineitem (
     l_orderkey      INTEGER        NOT NULL,
     l_partkey       INTEGER        NOT NULL,
     l_suppkey       INTEGER        NOT NULL,

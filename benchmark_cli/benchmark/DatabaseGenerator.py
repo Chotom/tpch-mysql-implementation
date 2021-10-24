@@ -1,20 +1,151 @@
-class DatabaseGenerator():
+import glob
+import shutil
+import subprocess
+from pathlib import Path
+from mysql.connector import MySQLConnection
+
+from benchmark_cli.constants import *
+from benchmark_cli.utils import get_connection, create_logger
+
+
+class DatabaseGenerator:
     """
-    todo: implement
+    A class for generating, loading, resetting data for database
     """
 
-    def generate_db(self):
-        """Generate database, create tables, indexes, loading data"""
-        return NotImplemented
+    log = create_logger('database_generator')
+
+    def generate_data(self):
+        self.log.info('Generating data with dbgen...')
+        """Generate database input"""
+        # generate database bulk load
+        # call dbgen with scale factor
+        subprocess.run([f'{DBGEN_DIR}/dbgen',
+                        '-vf',
+                        '-s', f'{SCALE_FACTOR}'],
+                       cwd=DBGEN_DIR)
+        # create folder for data if not exist
+        Path(DATA_DIR).mkdir(parents=True, exist_ok=True)
+        # move generated data to data folder
+        for file in glob.glob(f'{DBGEN_DIR}/*.tbl'):
+            shutil.move(file, f'{DATA_DIR}/{os.path.basename(file)}')
 
     def reset_db(self):
-        """Drop data, reset config, loading data"""
-        return NotImplemented
+        """Drop database, create new database"""
+        global connection
 
-    def generate_refresh_data(self):
-        """Generate refresh data: updates and deletes"""
-        return NotImplemented
+        try:
+            # remove parameter 'database' from DB_CONFIG
+            # since there might not be any database
+            config = dict(DB_CONFIG)
+            config.pop('database')
+            connection = MySQLConnection(**config)
+            cursor = connection.cursor(buffered=True)
 
-    def generate_queries(self):
+            # Drop old database
+            sql = f'DROP DATABASE IF EXISTS `{DB_CONFIG["database"]}`'
+            cursor.execute(sql)
+
+            # Create new database
+            sql = f'CREATE DATABASE `{DB_CONFIG["database"]}`'
+            cursor.execute(sql)
+
+            # allow loading files from local input files
+            sql = 'SET GLOBAL local_infile=1'
+            cursor.execute(sql)
+        except Exception as e:
+            self.log.error(f'Exeception occured: {e}')
+            return
+        finally:
+            connection.close()
+        self.log.info("Database reset successfully")
+
+    def load_db(self):
+        """Create tables, load generated data, set indexes and relations"""
+        global connection
+
+        try:
+            connection, cursor = get_connection(self.log, True)
+
+            # Create tables in database
+            self.log.info('Creating tables in database...')
+            # Load file 'dss.ddl' to database
+            with open(f'{DBGEN_DIR}/dss.ddl') as ddl_file:
+                sql = ddl_file.read()
+                for _ in cursor.execute(sql, multi=True):
+                    pass
+
+            # Load '*.tbl' files to database
+            self.log.info('Loading data to database...')
+            # temporarily disable foreign key checking
+            sql = 'SET foreign_key_checks=0'
+            cursor.execute(sql)
+            # for each table, which is represented by '*.tbl' file
+            for tbl_file in glob.glob(f'{DATA_DIR}/*.tbl'):
+                # extract table name from filepath
+                table_name = Path(tbl_file).stem
+
+                self.log.info(f'Loading table \'{table_name}\'')
+
+                # load data from tbl_file to database
+                sql = f"LOAD DATA LOCAL INFILE '{tbl_file}'" \
+                      f"INTO TABLE {table_name}" \
+                      f"FIELDS TERMINATED BY '|'" \
+                      f"LINES TERMINATED BY '|\\n'"
+                cursor.execute(sql)
+            # re-enable foreign key checking
+            sql = 'SET foreign_key_checks=1'
+            cursor.execute(sql)
+
+            # Create indexes and relations in database
+            self.log.info('Creating indexes and relations in database...')
+            # Load file 'dss.ri' to database
+            with open(f'{DBGEN_DIR}/dss.ri') as ri_file:
+                for _ in cursor.execute(ri_file.read(), multi=True):
+                    pass
+
+        except Exception as e:
+            self.log.error(f'Exeception occured: {e}')
+            return
+        finally:
+            connection.close()
+        self.log.info('Database created and loaded successfully.')
+
+    def generate_refresh_data(self, updates=MAX_REFRESH_FILE_INDEX):
+        """Generate refresh data for 4000 (or n) RF1/RF2 pairs: updates and deletes"""
+
+        self.log.info('Generating refresh data with dbgen...')
+
+        # call dbgen with scale factor and updates
+        subprocess.run([f'{DBGEN_DIR}/dbgen',
+                        '-vf',
+                        '-U', f'{updates}',
+                        '-s', f'{SCALE_FACTOR}'],
+                       cwd=DBGEN_DIR)
+        # create folder for refresh data
+        Path(REFRESH_DATA_DIR).mkdir(parents=True, exist_ok=True)
+
+        # move generated updates to refresh data folder
+        for file in [f for f_ in [glob.glob(f'{DBGEN_DIR}/{type}') for _ in ('*.tbl.u*', 'delete.*')] for f in f_]:
+            shutil.move(file, f'{REFRESH_DATA_DIR}/{os.path.basename(file)}')
+
+    def generate_queries(self, start_seed, sets):
         """Create queries and directory for each set"""
-        return NotImplemented
+
+        self.log.info('Generating queries with qgen...')
+
+        # for each required update
+        for i in range(sets):
+            # create directory for each set of queries
+            Path(f'{QUERIES_DIR}/{i}').mkdir(parents=True, exist_ok=True)
+            for j in range(1, 22 + 1):
+                # create output file if not exists
+                with open(f'{QUERIES_DIR}/{i}/{j}.sql', 'w+') as output_file:
+                    # call qgen
+                    subprocess.run([f'{DBGEN_DIR}/qgen',
+                                    f'{j}',
+                                    '-p', f'{i}',
+                                    '-r', f'{start_seed + i}'],
+                                   cwd=DBGEN_DIR,
+                                   env=dict(os.environ, DSS_QUERY=f'{DBGEN_DIR}/queries'),
+                                   stdout=output_file)
